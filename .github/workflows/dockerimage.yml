@@ -1,6 +1,8 @@
 name: Docker Image CI
 
 on:
+  schedule:
+    - cron: '0 15 * * 0'
   push:
     branches: [ master ]
   pull_request:
@@ -10,10 +12,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
     - uses: docker/setup-qemu-action@v3
@@ -124,3 +126,4 @@ jobs:
     - name: Test njs command line
       run: |
         echo "console.log('Using njs v' + njs.version)" | docker run -i --rm macbre/nginx njs -q - | grep "Using njs v0.8.3"
+    - uses: gautamkrishnar/keepalive-workflow@v1
