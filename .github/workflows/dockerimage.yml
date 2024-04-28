@@ -65,10 +65,6 @@ jobs:
       run: |
         docker images | head -n3
 
-    - name: Are we running as non-root?
-      run: |
-        docker run --rm -t macbre/nginx whoami | grep nginx
-
     - name: Run nginx -V and njs -v
       run: |
         docker run --rm -t macbre/nginx nginx -V | sed 's/\-\-/\n\t--/g' | tee
