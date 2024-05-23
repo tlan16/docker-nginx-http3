@@ -62,5 +62,5 @@ jobs:
         destination_container_repo: my-user/my-repo
         provider: dockerhub
         short_description: 'nginx with QUIC, HTTP3, brotli, njs module and Grade A+ SSL'
-        readme_file: 'README.md'
+        readme_file: 'readme.md'
     - uses: gautamkrishnar/keepalive-workflow@v1
