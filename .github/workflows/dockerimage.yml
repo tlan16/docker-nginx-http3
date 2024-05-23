@@ -67,8 +67,8 @@ jobs:
 
     - name: Run nginx -V and njs -v
       run: |
-        docker run --rm -t macbre/nginx nginx -V | sed 's/\-\-/\n\t--/g' | tee
-        echo "njs v$(docker run -t macbre/nginx njs -v)"
+        docker run --rm -t tlan16/nginx nginx -V | sed 's/\-\-/\n\t--/g' | tee
+        echo "njs v$(docker run -t tlan16/nginx njs -v)"
 
     - name: Serve a static asset
       run: |
@@ -110,7 +110,7 @@ jobs:
         grep --fixed-strings '<p>It works!</p>' /tmp/h2
 
 
-        docker run --rm --network host ghcr.io/macbre/curl-http3 \
+        docker run --rm --network host tlan16/nginx \
           curl -v --insecure https://localhost:8889 --http3 --max-time 5 2>&1 | tee /tmp/h3
 
         grep --fixed-strings '< HTTP/3 200' /tmp/h3
@@ -121,5 +121,5 @@ jobs:
 
     - name: Test njs command line
       run: |
-        echo "console.log('Using njs v' + njs.version)" | docker run -i --rm macbre/nginx njs -q - | grep "Using njs v0.8.3"
+        echo "console.log('Using njs v' + njs.version)" | docker run -i --rm tlan16/nginx njs -q - | grep "Using njs v0.8.3"
     - uses: gautamkrishnar/keepalive-workflow@v1
