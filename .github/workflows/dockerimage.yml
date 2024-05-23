@@ -54,13 +54,11 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
-    - uses: christian-korneck/update-container-description-action@v1
-      env:
-        DOCKER_USER: ${{ secrets.USERNAME }}
-        DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+    - uses: peter-evans/dockerhub-description@v3
       with:
-        destination_container_repo: my-user/my-repo
-        provider: dockerhub
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        repository: ${{ secrets.DOCKER_USERNAME }}/nginx
         short_description: 'nginx with QUIC, HTTP3, brotli, njs module and Grade A+ SSL'
-        readme_file: 'readme.md'
+        readme-filepath: 'readme.md'
     - uses: gautamkrishnar/keepalive-workflow@v1
