@@ -49,11 +49,4 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
-    - uses: peter-evans/dockerhub-description@v4
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: ${{ secrets.DOCKER_USERNAME }}/nginx
-        short-description: 'nginx with QUIC, HTTP3, brotli, njs module and Grade A+ SSL'
-        readme-filepath: 'readme.md'
     - uses: gautamkrishnar/keepalive-workflow@v1
