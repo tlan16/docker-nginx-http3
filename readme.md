@@ -1,7 +1,7 @@
 ## What is this?
 [![Docker Image CI](https://github.com/macbre/docker-nginx-http3/actions/workflows/dockerimage.yml/badge.svg)](https://github.com/macbre/docker-nginx-http3/actions/workflows/dockerimage.yml)
 
-Stable and up-to-date [nginx](https://nginx.org/en/CHANGES) with [QUIC + HTTP/3 support](https://nginx.org/en/docs/http/ngx_http_v3_module.html), [Google's `brotli` compression](https://github.com/google/ngx_brotli), [`njs` module](https://nginx.org/en/docs/njs/) and [Grade A+ SSL config](https://ssl-config.mozilla.org/)
+Stable and up-to-date [nginx](https://nginx.org/en/CHANGES) with [QUIC + HTTP/3 support](https://nginx.org/en/docs/http/ngx_http_v3_module.html), [Google's `brotli` compression](https://github.com/google/ngx_brotli), [`zstd` compression](https://github.com/tokers/zstd-nginx-module), [`njs` module](https://nginx.org/en/docs/njs/), [kTLS/sendfile support](https://delthas.fr/blog/2023/kernel-tls/) and [Grade A+ SSL config](https://ssl-config.mozilla.org/)
 
 ## How to use this image
 As this project is based on the official [nginx image](https://hub.docker.com/_/nginx/) look for instructions there. In addition to the standard configuration directives, you'll be able to use the brotli module specific ones, see [here for official documentation](https://github.com/google/ngx_brotli#configuration-directives)
@@ -21,17 +21,18 @@ docker pull ghcr.io/macbre/nginx-http3:latest
 * [built-in nginx modules](https://nginx.org/en/docs/)
 * [`headers-more-nginx-module`](https://github.com/openresty/headers-more-nginx-module#readme) - sets and clears HTTP request and response headers
 * [`ngx_brotli`](https://github.com/google/ngx_brotli#configuration-directives) - adds [brotli response compression](https://datatracker.ietf.org/doc/html/rfc7932)
+* [`zstd-nginx-module`](https://github.com/tokers/zstd-nginx-module#directives) - adds [Zstandard response compression](https://datatracker.ietf.org/doc/html/rfc8878)
 * [`ngx_http_geoip2_module`](https://github.com/leev/ngx_http_geoip2_module#download-maxmind-geolite2-database-optional) - creates variables with values from the maxmind geoip2 databases based on the client IP
-* [`njs` module](https://nginx.org/en/docs/njs/) - a subset of the JavaScript language that allows extending nginx functionality
+* [`njs` module](https://nginx.org/en/docs/njs/) - a subset of the JavaScript language that allows extending nginx functionality ([GitHub repository](https://github.com/nginx/njs))
 
 ```
 $ docker run -it macbre/nginx-http3 nginx -V
-nginx version: nginx/1.25.4 (quic-89bff782528a)
-built by gcc 13.2.1 20231014 (Alpine 13.2.1_git20231014) 
-built with OpenSSL 3.1.4 24 Oct 2023
+nginx version: nginx/1.29.0 (aff13bf32357)
+built by gcc 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+built with OpenSSL 3.3.3 11 Feb 2025
 TLS SNI support enabled
 configure arguments: 
-	--build=quic-89bff782528a 
+	--build=aff13bf32357
 	--prefix=/etc/nginx 
 	--sbin-path=/usr/sbin/nginx 
 	--modules-path=/usr/lib/nginx/modules 
@@ -77,13 +78,18 @@ configure arguments:
 	--with-file-aio 
 	--with-http_v2_module 
 	--with-http_v3_module 
+	--with-openssl-opt=enable-ktls 
 	--add-module=/usr/src/ngx_brotli 
-	--add-module=/usr/src/headers-more-nginx-module-0.37 
+	--add-module=/usr/src/headers-more-nginx-module-0.38 
 	--add-module=/usr/src/njs/nginx 
-	--add-dynamic-module=/usr/src/ngx_http_geoip2_module
+	--add-module=/usr/src/zstd 
+	--add-dynamic-module=/usr/src/ngx_http_geoip2_module 
+	--with-cc-opt='-g -O2 -flto=auto -ffat-lto-objects -flto=auto -ffat-lto-objects -I /usr/src/quickjs' 
+	--with-ld-opt='-Wl,-Bsymbolic-functions -flto=auto -ffat-lto-objects -flto=auto -L /usr/src/quickjs'
+
 
 $ docker run -it macbre/nginx-http3 njs -v
-0.8.3
+0.9.1
 ```
 
 ## SSL Grade A+ handling
