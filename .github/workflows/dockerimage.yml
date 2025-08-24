@@ -40,6 +40,18 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - uses: actions/cache@v4
+      id: cache
+      with:
+        path: cache-mount
+        key: cache-mount-${{ hashFiles('Dockerfile') }}
+
+    - uses: reproducible-containers/buildkit-cache-dance@v3
+      with:
+        builder: ${{ steps.setup-buildx.outputs.name }}
+        cache-dir: cache-mount
+        dockerfile: Dockerfile
+        skip-extraction: ${{ steps.cache.outputs.cache-hit }}
     - name: Build the Docker image
       uses: docker/build-push-action@v5
       with:
@@ -49,4 +61,3 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
         platforms: linux/amd64,linux/arm64
-    - uses: gautamkrishnar/keepalive-workflow@v1
