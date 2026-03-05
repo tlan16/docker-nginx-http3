@@ -54,7 +54,7 @@ jobs:
         dockerfile: Dockerfile
         skip-extraction: ${{ steps.cache.outputs.cache-hit }}
     - name: Build the Docker image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: .
         tags: tlan16/nginx
